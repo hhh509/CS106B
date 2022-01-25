@@ -1,4 +1,6 @@
 #include "WhatAreYouDoing.h"
+#include <cctype>
+#include "strlib.h"
 using namespace std;
 
 /* TODO: Read the comments in WhatAreYouDoing.h to see what this function needs to do, then
@@ -7,10 +9,39 @@ using namespace std;
  * Don't forget about the tokenize function defined in WhatAreYouDoing.h; you'll almost
  * certainly want to use it.
  */
+
+void helper(Vector<string> &s,string &chosen,Set<string> &res,int i){
+    if(i>=s.size()){
+        res+=chosen;
+        return;
+    }
+    else{
+        string a=s[i];
+        if(isalpha(a[0])){
+            string l=toLowerCase(a);
+            string u=toUpperCase(a);
+            int len=chosen.length();
+            chosen+=l;
+            helper(s,chosen,res,i+1);
+            chosen.erase(len);
+            chosen.append(u);
+            helper(s,chosen,res,i+1);
+            chosen.erase(len);
+        }
+        else{
+            chosen.append(a);
+            helper(s,chosen,res,i+1);
+        }
+    }
+}
+
 Set<string> allEmphasesOf(const string& sentence) {
     /* TODO: Delete this line and the next one, then implement this function. */
-    (void) sentence;
-    return {};
+    Vector<string> s=tokenize(sentence);
+    string chosen={};
+    Set<string> res;
+    helper(s,chosen,res,0);
+    return res;
 }
 
 /* * * * * * Test Cases * * * * * */
@@ -19,7 +50,16 @@ Set<string> allEmphasesOf(const string& sentence) {
 /* TODO: Add your own tests here. You know the drill - look for edge cases, think about
  * very small and very large cases, etc.
  */
+PROVIDED_TEST("My Own Test.") {
+    Set<string> expected = {
+        "hello * 'haha'",
+        "hello * 'HAHA'",
+        "HELLO * 'haha'",
+        "HELLO * 'HAHA'"
+    };
 
+    EXPECT_EQUAL(allEmphasesOf("Hello * 'haha'"), expected);
+}
 
 
 

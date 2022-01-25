@@ -4,11 +4,49 @@ using namespace std;
 /* TODO: Refer to ShiftScheduling.h for more information about what this function should do.
  * Then, delete this comment and replace it with one of your own.
  */
+
+int value(Set<Shift>& chosen){
+    int val=0;
+    for(Shift i:chosen){
+        val+=valueOf(i);
+    }
+    return val;
+}
+
+Set<Shift> helper(const Set<Shift>& shifts, const Set<Shift>& chosen, int maxHours){
+    if(shifts.isEmpty())
+        return chosen;
+    Shift e = shifts.first();
+    int flag=0;
+    int time=maxHours;
+    for(Shift i:chosen){
+        if(overlapsWith(i,e))
+        {
+            flag=1;
+            break;
+        }
+    }
+    time-=lengthOf(e);
+    Set<Shift> l;
+    if(!flag && time>=0){
+        l=helper(shifts-e,chosen+e,maxHours-lengthOf(e));
+    }
+    Set<Shift> r=helper(shifts-e,chosen,maxHours);
+    int left=value(l);
+    int right=value(r);
+    return left>right?l:r;
+}
+
+
 Set<Shift> highestValueScheduleFor(const Set<Shift>& shifts, int maxHours) {
     /* TODO: Delete the next few lines and implement this function. */
-    (void) shifts;
-    (void) maxHours;
-    return {};
+    if(maxHours<0){
+        error("haha");
+    }
+    else{
+        Set<Shift> chosen;
+        return helper(shifts,chosen,maxHours);
+    }
 }
 
 
